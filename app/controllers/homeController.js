@@ -1,15 +1,22 @@
 app.controller("HomeController", function ($scope, AuthService) {
-  // Lấy thông tin người dùng từ localStorage
   const userInfo = AuthService.getUserInfo();
+  $scope.fullName = userInfo ? userInfo.fullName : "Null"; // Default to "Guest" if userInfo is null
 
-  if (userInfo) {
-    $scope.userName = userInfo.name || "User"; // Giả sử thông tin người dùng có trường 'name'
+  async function fetchUsers() {
+    try {
+      const users = await AuthService.getAllUser();
+      $scope.users = users;
+
+      // Manually trigger Angular digest cycle if needed
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error.message);
+    }
   }
 
-  // Kiểm tra thông báo từ URL (nếu cần)
-  const urlParams = new URLSearchParams(window.location.search);
-
-  $scope.message = urlParams.get("success") || ""; // Nhận thông báo từ URL nếu có
-
-  // Bạn có thể thêm mã hiển thị khác tại đây
+  if (userInfo) {
+    fetchUsers(); // Only fetch users if userInfo exists
+  }
 });

@@ -146,7 +146,7 @@ app.controller(
         localStorage.setItem("userInfo", JSON.stringify(response.props));
         localStorage.setItem("accessToken", response.accessToken); // Chỉ cần lưu chuỗi, không cần JSON.stringify
         $scope.successMessage = "Login successfully";
-        $location.path("/home").search({ success: "Login successfully" });
+        $location.path("/home");
         // Thực hiện các hành động khác sau khi xác thực thành công
       } catch (error) {
         // Hiển thị thông báo lỗi cụ thể hơn nếu có
