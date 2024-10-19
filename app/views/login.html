@@ -1,0 +1,269 @@
+<!-- Form -->
+<div class="d-flex justify-content-center align-items-center mt-5">
+  <div class="row border rounded-5 p-3 bg-white shadow box-area">
+    <div
+      class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
+      style="background: #103cbe"
+    >
+      <div class="featured-image mb-3">
+        <img src="images/1.png" class="img-fluid" style="width: 250px" />
+      </div>
+      <p class="text-white fs-2">Welcome Back</p>
+      <small class="text-white text-wrap text-center fw-light"
+        >Log in to explore our exclusive policies and offers.</small
+      >
+    </div>
+
+    <div class="col-md-6 right-box">
+      <div class="row align-items-center text-center">
+        <div class="header-text mb-3 align-text-center">
+          <h2>Sign In</h2>
+          <p>We're excited to see you again!</p>
+        </div>
+
+        <!-- Hiển thị lỗi bên dưới thẻ input email -->
+
+        <div class="px-2.5">
+          <div
+            ng-if="errorMessage"
+            class="alert alert-danger w-100 error-message mb-3"
+          >
+            {{errorMessage}}
+          </div>
+        </div>
+
+        <!-- Input với icon email -->
+        <div class="input-group mb-3 position-relative">
+          <input
+            type="text"
+            class="form-control form-control-lg bg-light fs-6 pl-40px input-custom-radius"
+            placeholder="Email address"
+            ng-model="email"
+            ng-class="{'input-error': errorMessage && !isValidEmail(email)}"
+          />
+          <i class="fas fa-envelope icon-inside-input"></i>
+        </div>
+
+        <div class="input-group mb-1 position-relative">
+          <input
+            type="{{showPassword ? 'text' : 'password'}}"
+            class="form-control form-control-lg bg-light fs-6 pl-40px input-custom-radius"
+            placeholder="Password"
+            ng-model="password"
+            ng-class="{'input-error': errorMessage && !$scope.password}"
+          />
+          <i class="fas fa-lock icon-inside-input"></i>
+          <i
+            class="{{showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}} toggle-password"
+            ng-click="togglePasswordVisibility()"
+          ></i>
+        </div>
+
+        <div class="input-group mb-5 d-flex justify-content-between">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="formCheck" />
+            <label for="formCheck" class="form-check-label text-secondary"
+              ><small>Remember Me</small></label
+            >
+          </div>
+          <div class="forgot">
+            <small><a href="#">Forgot Password?</a></small>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <button class="btn btn-lg btn-primary w-100 fs-6" ng-click="login()">
+            Login
+          </button>
+        </div>
+
+        <div class="input-group mb-3">
+          <button class="btn btn-lg btn-light w-100 fs-6">
+            <img
+              src="images/google.png"
+              style="width: 20px"
+              class="me-2"
+            /><small>Sign In with Google</small>
+          </button>
+        </div>
+
+        <div class="row">
+          <small>Don't have an account? <a href="#">Sign Up</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div ng-if="isLoading" class="spinner-overlay">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- OTP Modal -->
+<div
+  class="modal fade"
+  id="otpModal"
+  tabindex="-1"
+  aria-labelledby="otpModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="otpModalLabel">OTP Verification</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Please enter the 6-digit code sent to your email.</p>
+        <div class="otp-input d-flex justify-content-center gap-2">
+          <input
+            type="tel"
+            id="otp1"
+            class="form-control otp-box text-center"
+            maxlength="1"
+            ng-model="otp1"
+            ng-keyup="moveFocus($event, 'otp2')"
+            pattern="[0-9]*"
+          />
+          <input
+            type="tel"
+            id="otp2"
+            class="form-control otp-box text-center"
+            maxlength="1"
+            ng-model="otp2"
+            ng-keyup="moveFocus($event, 'otp3')"
+            pattern="[0-9]*"
+          />
+          <input
+            type="tel"
+            id="otp3"
+            class="form-control otp-box text-center"
+            maxlength="1"
+            ng-model="otp3"
+            ng-keyup="moveFocus($event, 'otp4')"
+            pattern="[0-9]*"
+          />
+          <input
+            type="tel"
+            id="otp4"
+            class="form-control otp-box text-center"
+            maxlength="1"
+            ng-model="otp4"
+            ng-keyup="moveFocus($event, 'otp5')"
+            pattern="[0-9]*"
+          />
+          <input
+            type="tel"
+            id="otp5"
+            class="form-control otp-box text-center"
+            maxlength="1"
+            ng-model="otp5"
+            ng-keyup="moveFocus($event, 'otp6')"
+            pattern="[0-9]*"
+          />
+          <input
+            type="tel"
+            id="otp6"
+            class="form-control otp-box text-center"
+            maxlength="1"
+            ng-model="otp6"
+            ng-keyup="moveFocus($event, 'submit')"
+            pattern="[0-9]*"
+          />
+        </div>
+        <div class="alert alert-danger mt-3" ng-if="errorMessage">
+          {{errorMessage}}
+        </div>
+        <div class="alert alert-success mt-3" ng-if="successMessage">
+          {{successMessage}}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          ng-click="clearValue()"
+        >
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" ng-click="verifyOtp()">
+          Verify
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .icon-inside-input {
+    position: absolute;
+    top: 50%;
+    left: 7%;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 7%;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+    z-index: 1000;
+  }
+
+  .pl-40px {
+    padding-left: 40px;
+  }
+
+  .input-custom-radius {
+    border-top-right-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+  }
+
+  .spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center; /* Canh giữa theo chiều ngang */
+    align-items: center;
+    z-index: 1050;
+  }
+
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .otp-box {
+    width: 40px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .error-message {
+    font-size: 13px;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+
+  .input-error {
+    border: 1px solid red;
+  }
+</style>
