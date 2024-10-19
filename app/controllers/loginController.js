@@ -1,6 +1,7 @@
-app.controller("LoginController", function ($scope, AuthService) {
+app.controller("LoginController", function ($scope, $timeout, AuthService) {
   $scope.showPassword = false;
   $scope.errorMessage = "";
+  $scope.successMessage = "";
   $scope.isLoading = false;
   $scope.otp1 = "";
   $scope.otp2 = "";
@@ -8,6 +9,22 @@ app.controller("LoginController", function ($scope, AuthService) {
   $scope.otp4 = "";
   $scope.otp5 = "";
   $scope.otp6 = "";
+  $scope.countdown = 60;
+
+  $scope.resetValue = function () {
+    $scope.errorMessage = "";
+    $scope.isLoading = false;
+    $scope.otp1 =
+      $scope.otp2 =
+      $scope.otp3 =
+      $scope.otp4 =
+      $scope.otp5 =
+      $scope.otp6 =
+        "";
+    $scope.email = "";
+    $scope.password = "";
+    $scope.countdown = 60;
+  };
 
   $scope.togglePasswordVisibility = function () {
     $scope.showPassword = !$scope.showPassword;
@@ -53,6 +70,40 @@ app.controller("LoginController", function ($scope, AuthService) {
     }
   };
 
+  $scope.startCountdown = function () {
+    $scope.countdown = 60; // Reset lại countdown
+
+    var timer = function () {
+      if ($scope.countdown > 0) {
+        $scope.countdown--;
+        if (!$scope.$$phase) {
+          $scope.$apply(); // Cập nhật giao diện
+        }
+        $timeout(timer, 1000); // Tiếp tục đếm ngược
+      } else {
+        // Tự động đóng modal khi countdown về 0
+        var otpModalElement = document.getElementById("otpModal");
+        var otpModal = bootstrap.Modal.getInstance(otpModalElement); // Lấy instance của modal
+        if (otpModal) {
+          otpModal.hide();
+          $scope.errorMessage = "OTP expired.";
+        } else {
+          console.error("Modal instance not found");
+        }
+      }
+    };
+    $timeout(timer, 1000); // Khởi chạy timer
+  };
+
+  // Sử dụng sự kiện để gọi startCountdown khi modal hiển thị
+  angular.element(document).ready(function () {
+    var otpModalElement = document.getElementById("otpModal");
+
+    otpModalElement.addEventListener("shown.bs.modal", function () {
+      $scope.startCountdown();
+    });
+  });
+
   $scope.moveFocus = function (event, nextInputId) {
     const input = event.target;
 
@@ -68,19 +119,6 @@ app.controller("LoginController", function ($scope, AuthService) {
         previousInput.focus();
       }
     }
-  };
-
-  $scope.clearValue = function () {
-    $scope.errorMessage = "";
-    $scope.isLoading = false;
-    $scope.otp1 = "";
-    $scope.otp2 = "";
-    $scope.otp3 = "";
-    $scope.otp4 = "";
-    $scope.otp5 = "";
-    $scope.otp6 = "";
-    $scope.email = "";
-    $scope.password = "";
   };
 
   $scope.verifyOtp = async function () {
@@ -104,7 +142,7 @@ app.controller("LoginController", function ($scope, AuthService) {
       $scope.errorMessage = "OTP expired or invalid";
       // Hiển thị thông báo lỗi
     } finally {
-      $scope.clearValue();
+      $scope.resetValue();
       if (!$scope.$$phase) {
         $scope.$apply(); // Thông báo cho AngularJS về sự thay đổi
       }

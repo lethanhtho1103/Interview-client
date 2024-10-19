@@ -123,6 +123,7 @@
       </div>
       <div class="modal-body">
         <p>Please enter the 6-digit code sent to your email.</p>
+        <p>Time remaining: <strong>{{countdown}}</strong> seconds</p>
         <div class="otp-input d-flex justify-content-center gap-2">
           <input
             type="tel"
@@ -182,16 +183,13 @@
         <div class="alert alert-danger mt-3" ng-if="errorMessage">
           {{errorMessage}}
         </div>
-        <div class="alert alert-success mt-3" ng-if="successMessage">
-          {{successMessage}}
-        </div>
       </div>
       <div class="modal-footer">
         <button
           type="button"
           class="btn btn-secondary"
           data-bs-dismiss="modal"
-          ng-click="clearValue()"
+          ng-click="resetValue()"
         >
           Close
         </button>
