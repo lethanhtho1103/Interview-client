@@ -68,7 +68,7 @@ app.factory("AuthService", function ($http) {
     try {
       // Retrieve token from localStorage
       const token = localStorage.getItem("accessToken"); // Update this to match your storage key if different
-      console.log(token);
+
       // Send GET request with Authorization header
       const response = await $http.get("http://localhost:8000/user", {
         headers: {
@@ -86,6 +86,32 @@ app.factory("AuthService", function ($http) {
       const message = error.response
         ? error.response.data.message ||
           "An error occurred while fetching users."
+        : error.message || "An unknown error occurred.";
+      throw new Error(message);
+    }
+  };
+
+  authService.logout = async function () {
+    try {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("accessToken"); // Update this to match your storage key if different
+
+      // Send GET request with Authorization header
+      const response = await $http.post("http://localhost:8000/logout", {
+        headers: {
+          token: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        return response.data; // Return the data if successful
+      } else {
+        throw new Error(response.data.message || "Error logout.");
+      }
+    } catch (error) {
+      console.log(error);
+      const message = error.response
+        ? error.response.data.message || "An error occurred while logout."
         : error.message || "An unknown error occurred.";
       throw new Error(message);
     }

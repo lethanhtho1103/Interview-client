@@ -1,13 +1,12 @@
 app.controller("HomeController", function ($scope, AuthService) {
   const userInfo = AuthService.getUserInfo();
-  $scope.fullName = userInfo ? userInfo.fullName : "Null"; // Default to "Guest" if userInfo is null
+  $scope.fullName = userInfo ? userInfo.fullName : "Null";
 
   async function fetchUsers() {
     try {
       const users = await AuthService.getAllUser();
       $scope.users = users;
 
-      // Manually trigger Angular digest cycle if needed
       if (!$scope.$$phase) {
         $scope.$apply();
       }
@@ -16,7 +15,14 @@ app.controller("HomeController", function ($scope, AuthService) {
     }
   }
 
+  $scope.logout = async function () {
+    await AuthService.logout();
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("accessToken");
+    window.location.href = "#!/login";
+  };
+
   if (userInfo) {
-    fetchUsers(); // Only fetch users if userInfo exists
+    fetchUsers();
   }
 });

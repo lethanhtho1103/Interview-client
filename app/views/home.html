@@ -1,3 +1,41 @@
+<header style="background-color: #6f42c1">
+  <nav class="navbar navbar-expand-md navbar-dark bd-navbar container">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">My App</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#!/home">Home</a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <span class="text-white me-2">{{ fullName }}</span>
+          <span
+            class="avatar rounded-circle bg-light text-dark d-flex justify-content-center align-items-center"
+            style="width: 30px; height: 30px; font-size: 16px; font-weight: 600"
+          >
+            {{ fullName.charAt(0) }}
+          </span>
+          <button class="btn btn-outline-light ms-3" ng-click="logout()">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
 <div class="container mt-5">
   <h1 class="text-center">User List</h1>
 
