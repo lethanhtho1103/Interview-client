@@ -1,6 +1,10 @@
 app.factory("AuthService", function ($http) {
   var authService = {};
 
+  const date = new Date();
+  date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 ngày
+  const expires = `expires=${date.toUTCString()}`;
+
   // Hàm đăng nhập
   authService.login = async function (email, password) {
     try {
@@ -34,6 +38,9 @@ app.factory("AuthService", function ($http) {
         {
           email,
           otp: parseInt(otp, 10),
+        },
+        {
+          withCredentials: true, // Thêm thuộc tính này để gửi và nhận cookie
         }
       );
 
@@ -41,11 +48,14 @@ app.factory("AuthService", function ($http) {
         // Lưu thông tin vào localStorage nếu xác thực thành công
         localStorage.setItem("userInfo", JSON.stringify(response.data.props));
         localStorage.setItem("accessToken", response.data.accessToken);
-        return response.data; // Trả về dữ liệu khi xác thực thành công
+        document.cookie = `refresh_token=${response.data.refreshToken}; path=/; ${expires};`;
+        return response.data;
       } else {
+        console.error(response);
         throw new Error(response.data.message || "OTP verification failed!");
       }
     } catch (error) {
+      console.error(error);
       throw new Error(
         error.response
           ? error.response.data.message
@@ -56,7 +66,13 @@ app.factory("AuthService", function ($http) {
 
   // Hàm kiểm tra xem người dùng đã đăng nhập hay chưa
   authService.isLoggedIn = function () {
-    return !!localStorage.getItem("userInfo");
+    const userInfo = localStorage.getItem("userInfo");
+
+    if (userInfo === "undefined" || !userInfo) {
+      return false;
+    }
+
+    return true;
   };
 
   authService.getUserInfo = function () {
@@ -91,27 +107,31 @@ app.factory("AuthService", function ($http) {
     }
   };
 
-  authService.logout = async function () {
+  authService.refreshToken = async function () {
     try {
-      // Retrieve token from localStorage
-      const token = localStorage.getItem("accessToken"); // Update this to match your storage key if different
-
-      // Send GET request with Authorization header
-      const response = await $http.post("http://localhost:8000/logout", {
-        headers: {
-          token: `Bearer ${token}`,
-        },
-      });
+      // Send POST request to refresh token endpoint
+      const response = await $http.post(
+        "http://localhost:8000/auth/refresh",
+        null,
+        {
+          withCredentials: true, // Thêm thuộc tính này để gửi và nhận cookie
+        }
+      );
 
       if (response.status === 200) {
+        // Update access token in localStorage
+        localStorage.setItem("accessToken", response.data.accessToken);
+        //Không cần lưu lại refreshToken
+        // document.cookie = `refresh_token=${response.data.refreshToken}; path=/; ${expires};`;
         return response.data; // Return the data if successful
       } else {
-        throw new Error(response.data.message || "Error logout.");
+        throw new Error(response.data.message || "Error refreshing token.");
       }
     } catch (error) {
       console.log(error);
       const message = error.response
-        ? error.response.data.message || "An error occurred while logout."
+        ? error.response.data.message ||
+          "An error occurred while refreshing token."
         : error.message || "An unknown error occurred.";
       throw new Error(message);
     }

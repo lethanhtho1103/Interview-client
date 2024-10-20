@@ -14,7 +14,6 @@ app.controller(
     $scope.countdown = 60;
 
     $scope.resetValue = function () {
-      $scope.errorMessage = "";
       $scope.isLoading = false;
       $scope.otp1 =
         $scope.otp2 =
@@ -126,7 +125,6 @@ app.controller(
       $scope.errorMessage = "";
       $scope.isLoading = true;
 
-      // Kiểm tra xem các trường OTP có hợp lệ không
       const otp =
         $scope.otp1 +
         $scope.otp2 +
@@ -137,14 +135,12 @@ app.controller(
 
       if (otp.length !== 6) {
         $scope.errorMessage = "Please enter a valid 6-digit OTP.";
-        $scope.isLoading = false; // Đặt lại trạng thái loading
+        $scope.isLoading = false;
         return;
       }
 
       try {
-        const response = await AuthService.verifyOtp($scope.email, otp);
-        localStorage.setItem("userInfo", JSON.stringify(response.props));
-        localStorage.setItem("accessToken", response.accessToken); // Chỉ cần lưu chuỗi, không cần JSON.stringify
+        await AuthService.verifyOtp($scope.email, otp);
         $scope.successMessage = "Login successfully";
         $location.path("/home");
         // Thực hiện các hành động khác sau khi xác thực thành công
