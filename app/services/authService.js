@@ -1,11 +1,6 @@
 app.factory("AuthService", function ($http) {
   var authService = {};
 
-  const date = new Date();
-  date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 ngày
-  const expires = `expires=${date.toUTCString()}`;
-
-  // Hàm đăng nhập
   authService.login = async function (email, password) {
     try {
       const response = await $http.post("http://localhost:8000/auth/login", {
@@ -30,7 +25,6 @@ app.factory("AuthService", function ($http) {
     }
   };
 
-  // Hàm xác thực OTP
   authService.verifyOtp = async function (email, otp) {
     try {
       const response = await $http.post(
@@ -40,12 +34,15 @@ app.factory("AuthService", function ($http) {
           otp: parseInt(otp, 10),
         },
         {
-          withCredentials: true, // Thêm thuộc tính này để gửi và nhận cookie
+          withCredentials: true,
         }
       );
 
       if (response.status === 200) {
-        // Lưu thông tin vào localStorage nếu xác thực thành công
+        const date = new Date();
+        date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const expires = `expires=${date.toUTCString()}`;
+
         localStorage.setItem("userInfo", JSON.stringify(response.data.props));
         localStorage.setItem("accessToken", response.data.accessToken);
         document.cookie = `refresh_token=${response.data.refreshToken}; path=/; ${expires};`;
@@ -64,7 +61,6 @@ app.factory("AuthService", function ($http) {
     }
   };
 
-  // Hàm kiểm tra xem người dùng đã đăng nhập hay chưa
   authService.isLoggedIn = function () {
     const userInfo = localStorage.getItem("userInfo");
 
@@ -82,10 +78,8 @@ app.factory("AuthService", function ($http) {
 
   authService.getAllUser = async function () {
     try {
-      // Retrieve token from localStorage
-      const token = localStorage.getItem("accessToken"); // Update this to match your storage key if different
+      const token = localStorage.getItem("accessToken");
 
-      // Send GET request with Authorization header
       const response = await $http.get("http://localhost:8000/user", {
         headers: {
           token: `Bearer ${token}`,
@@ -93,7 +87,7 @@ app.factory("AuthService", function ($http) {
       });
 
       if (response.status === 200) {
-        return response.data; // Return the data if successful
+        return response.data;
       } else {
         throw new Error(response.data.message || "Error fetching users.");
       }
@@ -109,21 +103,19 @@ app.factory("AuthService", function ($http) {
 
   authService.refreshToken = async function () {
     try {
-      // Send POST request to refresh token endpoint
       const response = await $http.post(
         "http://localhost:8000/auth/refresh",
         null,
         {
-          withCredentials: true, // Thêm thuộc tính này để gửi và nhận cookie
+          withCredentials: true,
         }
       );
 
       if (response.status === 200) {
-        // Update access token in localStorage
         localStorage.setItem("accessToken", response.data.accessToken);
         //Không cần lưu lại refreshToken
         // document.cookie = `refresh_token=${response.data.refreshToken}; path=/; ${expires};`;
-        return response.data; // Return the data if successful
+        return response.data;
       } else {
         throw new Error(response.data.message || "Error refreshing token.");
       }

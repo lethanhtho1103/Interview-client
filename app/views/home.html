@@ -1,7 +1,10 @@
 <header style="background-color: #6f42c1">
   <nav class="navbar navbar-expand-md navbar-dark bd-navbar container">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">My App</a>
+      <a class="navbar-brand" href="#">
+        <img src="/images/logo.png" alt="logo" />
+        My AngularJS App</a
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -22,14 +25,12 @@
         <div class="d-flex align-items-center">
           <span class="text-white me-2">{{ fullName }}</span>
           <span
-            class="avatar rounded-circle bg-light text-dark d-flex justify-content-center align-items-center"
-            style="width: 30px; height: 30px; font-size: 16px; font-weight: 600"
+            class="avatar rounded-circle bg-warning text-light d-flex justify-content-center align-items-center"
           >
             {{ fullName.charAt(0) }}
           </span>
-          <button class="btn btn-outline-light ms-3" ng-click="logout()">
-            Logout
-          </button>
+
+          <button class="btn ms-3" ng-click="logout()">Logout</button>
         </div>
       </div>
     </div>
@@ -39,7 +40,7 @@
 <div class="container mt-5">
   <h1 class="text-center">User List</h1>
 
-  <table class="table table-hover table-bordered">
+  <table ng-if="users.length > 0" class="table table-hover table-bordered">
     <thead class="table-primary">
       <tr>
         <th scope="col">#</th>
@@ -56,7 +57,42 @@
     </tbody>
   </table>
 
-  <p ng-if="!users || users.length === 0" class="text-center">
-    No users found.
+  <p
+    ng-if="!users || users.length === 0"
+    class="text-center mt-4 error-message"
+  >
+    {{message}}
   </p>
 </div>
+
+<style>
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .btn {
+    color: #ffe484;
+    border-color: #ffe484;
+    font-weight: 600;
+  }
+
+  .btn:hover {
+    background-color: #ffe484;
+    color: #000;
+    border-color: #ffe484;
+  }
+  .error-message {
+    border-radius: 5px;
+    margin: 0 0 5px;
+    padding: 7px 15px;
+    display: block;
+    font-weight: 600;
+    line-height: 1.429;
+    font-size: 14px;
+    border: 1px solid;
+    background: #fae5e5;
+    color: #f04438;
+  }
+</style>

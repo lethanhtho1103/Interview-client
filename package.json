@@ -13,6 +13,6 @@
   "dependencies": {
     "angular": "^1.8.2",
     "angular-route": "^1.8.2",
-    "http-server": "^14.1.1"
+    "http-server": "^0.12.3"
   }
 }

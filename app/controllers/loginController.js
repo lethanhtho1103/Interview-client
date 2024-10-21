@@ -95,7 +95,6 @@ app.controller(
       $timeout(timer, 1000); // Khởi chạy timer
     };
 
-    // Sử dụng sự kiện để gọi startCountdown khi modal hiển thị
     angular.element(document).ready(function () {
       var otpModalElement = document.getElementById("otpModal");
 
@@ -143,14 +142,15 @@ app.controller(
         await AuthService.verifyOtp($scope.email, otp);
         $scope.successMessage = "Login successfully";
         $location.path("/home");
-        // Thực hiện các hành động khác sau khi xác thực thành công
+        $timeout(function () {
+          alert("Login successfully.");
+        }, 500);
       } catch (error) {
-        // Hiển thị thông báo lỗi cụ thể hơn nếu có
         $scope.errorMessage = error.data?.message || "OTP invalid";
       } finally {
         $scope.resetValue();
         if (!$scope.$$phase) {
-          $scope.$apply(); // Thông báo cho AngularJS về sự thay đổi
+          $scope.$apply();
         }
       }
     };
